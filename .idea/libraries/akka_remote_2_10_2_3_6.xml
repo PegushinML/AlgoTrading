@@ -1,0 +1,20 @@
+<component name="libraryTable">
+  <library name="akka-remote_2.10-2.3.6">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/algo-local-runner/akka-remote_2.10-2.3.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/algo-local-runner/akka-slf4j_2.10-2.3.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/algo-local-runner/akka-actor_2.10-2.3.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/algo-local-runner/config-1.2.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/algo-local-runner/logback-classic-1.0.13.jar!/" />
+      <root url="jar://$PROJECT_DIR$/algo-local-runner/logback-core-1.0.13.jar!/" />
+      <root url="jar://$PROJECT_DIR$/algo-local-runner/netty-3.8.0.Final.jar!/" />
+      <root url="jar://$PROJECT_DIR$/algo-local-runner/protobuf-java-2.5.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/algo-local-runner/scala-library-2.10.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/algo-local-runner/slf4j-api-1.7.5.jar!/" />
+      <root url="jar://$PROJECT_DIR$/algo-local-runner/uncommons-maths-1.2.2a.jar!/" />
+      <root url="jar://$PROJECT_DIR$/algo-local-runner/algo-local-runner.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
