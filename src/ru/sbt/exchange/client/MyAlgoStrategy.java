@@ -74,13 +74,13 @@ public class MyAlgoStrategy implements AlgoStrategy {
             if (order.getPrice() > fairPrices.getPriceByInstrument(order.getInstrument())) {
                 Order sellOrder = order.opposite().withQuantity(order.getQuantity());
                 broker.addOrder(sellOrder);
-            } else if (order.getPrice() > getLastOrderPriceByInstrument(order.getInstrument()) + 0.1) {
-
-                Order newOrder = order.withPrice(order.getPrice() + 0.1);
-                broker.cancelOrdersByInstrument(newOrder.getInstrument());
-                broker.addOrder(newOrder);
-                setLastOrder(newOrder);
-            }
+//            } else if (order.getPrice() > getLastOrderPriceByInstrument(order.getInstrument()) + 0.1) {
+//
+//                Order newOrder = order.withPrice(order.getPrice() + 0.1);
+//                broker.cancelOrdersByInstrument(newOrder.getInstrument());
+//                broker.addOrder(newOrder);
+//                setLastOrder(newOrder);
+//            }
         }
     }
 
