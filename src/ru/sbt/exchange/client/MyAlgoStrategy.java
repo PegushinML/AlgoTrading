@@ -46,7 +46,7 @@ public class MyAlgoStrategy implements AlgoStrategy {
                         .get(Instruments.zeroCouponBond()) / 2)
                 .order();
         LastFloatOrder =  Order.sell(Instruments.floatingCouponBond())
-                .withPrice(fairPrices.getFloatCouponPrice() + 10)
+                .withPrice(fairPrices.getFloatCouponPriceSell() + 10)
                 .withQuantity(myPortfolio.getCountByInstrument()
                         .get(Instruments.floatingCouponBond()) / 2)
                 .order();
@@ -63,7 +63,7 @@ public class MyAlgoStrategy implements AlgoStrategy {
         antiCheatOffer(exchangeEvent, broker);
 
         if (order.getDirection() == Direction.SELL)
-            if (order.getPrice() < fairPrices.getPriceByInstrument(order.getInstrument())) {
+            if (order.getPrice() < fairPrices.getPriceByInstrument(order.getInstrument(), false)) {
                 Order buyOrder = order.opposite().withQuantity(order.getQuantity());
                 broker.addOrder(buyOrder);
                 //TODO work on case, where opponent has lower price
@@ -71,7 +71,7 @@ public class MyAlgoStrategy implements AlgoStrategy {
 
 
         if(order.getDirection() == Direction.BUY) {
-            if (order.getPrice() > fairPrices.getPriceByInstrument(order.getInstrument()) &&
+            if (order.getPrice() > fairPrices.getPriceByInstrument(order.getInstrument(), true) &&
                     myPortfolio.getCountByInstrument().get(order.getInstrument()).intValue() > order.getQuantity()) {
                 Order sellOrder = order.opposite().withQuantity(order.getQuantity());
                 broker.addOrder(sellOrder);
