@@ -97,7 +97,7 @@ public class MyAlgoStrategy implements AlgoStrategy {
 
 
     private boolean checkIfNoShort(Order order) {
-
+        return true;
     }
 
     private double getLastOrderPriceByInstrument(Instrument instrument) {
