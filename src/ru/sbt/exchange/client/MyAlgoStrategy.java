@@ -76,12 +76,14 @@ public class MyAlgoStrategy implements AlgoStrategy {
                     && order.getQuantity() <= myPortfolio.getCountByInstrument().get(order.getInstrument()).intValue()
                     && getLastOrderPriceByInstrument(order.getInstrument(), true) - 0.01
                     > fairPrices.getPriceByInstrument(order.getInstrument(), true)) {
+
                 Order sellOrder = order.withPrice(order.getPrice() - 0.01);
+                broker.cancelOrdersByInstrument(sellOrder.getInstrument());
                 broker.addOrder(sellOrder);
                 setLastOrder(sellOrder);
             }
         }
-                //TODO work on case, where opponent has lower price
+
 
 
         if(order.getDirection() == Direction.BUY) {
