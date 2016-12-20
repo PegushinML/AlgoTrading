@@ -39,7 +39,7 @@ public class MyAlgoStrategy implements AlgoStrategy {
 
     private void onNewPeriodStart(Broker broker) {
         //just calculate fair prices and make some offers
-        fairPrices = new FairPrices(broker, 7.5);
+        fairPrices = new FairPrices(broker, 9);
         myPortfolio = broker.getMyPortfolio();
         LastZeroOrder = Order.sell(Instruments.zeroCouponBond())
                 .withPrice(fairPrices.getZeroCouponPrice() + 10)
@@ -78,6 +78,7 @@ public class MyAlgoStrategy implements AlgoStrategy {
                     > fairPrices.getPriceByInstrument(order.getInstrument(), true)) {
                 Order sellOrder = order.withPrice(order.getPrice() - 0.01);
                 broker.addOrder(sellOrder);
+                setLastOrder(sellOrder);
             }
         }
                 //TODO work on case, where opponent has lower price
