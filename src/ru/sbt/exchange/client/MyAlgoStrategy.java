@@ -115,7 +115,7 @@ public class MyAlgoStrategy implements AlgoStrategy {
 
     private void antiCheatOffer(ExchangeEvent exchangeEvent, Broker broker) {
         Order order = exchangeEvent.getOrder();
-        Order middleOrder = broker.getTopOrders(order.getInstrument()).getSellOrders().get(0);
+        Order middleOrder = broker.getTopOrders(order.getInstrument()).getSellOrders().get(4);
         if(order.getDirection() == Direction.SELL)
         if(order.getPrice() > middleOrder.getPrice() + 20.0)
             broker.addOrder(order.withPrice(order.getPrice() - 5.0));
