@@ -63,8 +63,7 @@ public class MyAlgoStrategy implements AlgoStrategy {
         antiCheatOffer(exchangeEvent, broker);
 
         if (order.getDirection() == Direction.SELL)
-            if (order.getPrice() < fairPrices.getPriceByInstrument(order.getInstrument()) &&
-                    myPortfolio.getCountByInstrument().get(order.getInstrument()).intValue() > order.getQuantity()) {
+            if (order.getPrice() < fairPrices.getPriceByInstrument(order.getInstrument())) {
                 Order buyOrder = order.opposite().withQuantity(order.getQuantity());
                 broker.addOrder(buyOrder);
                 //TODO work on case, where opponent has lower price
@@ -72,17 +71,17 @@ public class MyAlgoStrategy implements AlgoStrategy {
 
 
         if(order.getDirection() == Direction.BUY) {
-            if (order.getPrice() > fairPrices.getPriceByInstrument(order.getInstrument())) {
+            if (order.getPrice() > fairPrices.getPriceByInstrument(order.getInstrument()) &&
+                    myPortfolio.getCountByInstrument().get(order.getInstrument()).intValue() > order.getQuantity()) {
                 Order sellOrder = order.opposite().withQuantity(order.getQuantity());
                 broker.addOrder(sellOrder);
+            } else if (order.getPrice() > getLastOrderPriceByInstrument(order.getInstrument()) + 0.1) {
+
+                Order newOrder = order.withPrice(order.getPrice() + 0.1);
+                broker.cancelOrdersByInstrument(newOrder.getInstrument());
+                broker.addOrder(newOrder);
+                setLastOrder(newOrder);
             }
-//            } else if (order.getPrice() > getLastOrderPriceByInstrument(order.getInstrument()) + 0.1) {
-//
-//                Order newOrder = order.withPrice(order.getPrice() + 0.1);
-//                broker.cancelOrdersByInstrument(newOrder.getInstrument());
-//                broker.addOrder(newOrder);
-//                setLastOrder(newOrder);
-//            }
         }
     }
 
@@ -116,7 +115,7 @@ public class MyAlgoStrategy implements AlgoStrategy {
 
     private void antiCheatOffer(ExchangeEvent exchangeEvent, Broker broker) {
         Order order = exchangeEvent.getOrder();
-        Order middleOrder = broker.getTopOrders(order.getInstrument()).getSellOrders().get(0);
+        Order middleOrder = broker.getTopOrders(order.getInstrument()).getSellOrders().get(4);
         if(order.getDirection() == Direction.SELL)
         if(order.getPrice() > middleOrder.getPrice() + 20.0)
             broker.addOrder(order.withPrice(order.getPrice() - 5.0));
