@@ -14,6 +14,7 @@ public class MyAlgoStrategy implements AlgoStrategy {
     private Order LastZeroOrder;
     private Order LastFixedOrder;
     private Order LastFloatOrder;
+    private Order LastFloatOrderBuy;
 
 
     @Override
@@ -55,6 +56,11 @@ public class MyAlgoStrategy implements AlgoStrategy {
                 .withQuantity(myPortfolio.getCountByInstrument()
                         .get(Instruments.fixedCouponBond()) / 2)
                 .order();
+        LastFloatOrderBuy =  Order.sell(Instruments.floatingCouponBond())
+                .withPrice(fairPrices.getFloatCouponPriceBuy() - 10)
+                .withQuantity(myPortfolio.getCountByInstrument()
+                        .get(Instruments.floatingCouponBond()) / 2)
+                .order();
     }
 
     private void onOrderNewEvent(ExchangeEvent exchangeEvent, Broker broker) {
@@ -66,10 +72,10 @@ public class MyAlgoStrategy implements AlgoStrategy {
             if (order.getPrice() < fairPrices.getPriceByInstrument(order.getInstrument(), false)) {
                 Order buyOrder = order.opposite().withQuantity(order.getQuantity());
                 broker.addOrder(buyOrder);
-            } else if (order.getPrice() < getLastOrderPriceByInstrument(order.getInstrument())
+            } else if (order.getPrice() < getLastOrderPriceByInstrument(order.getInstrument(), true)
                     && order.getQuantity() <= myPortfolio.getCountByInstrument().get(order.getInstrument()).intValue()
-                    && getLastOrderPriceByInstrument(order.getInstrument()) + 0.01
-                    < fairPrices.getPriceByInstrument(order.getInstrument(), false)) {
+                    && getLastOrderPriceByInstrument(order.getInstrument(), true) - 0.01
+                    > fairPrices.getPriceByInstrument(order.getInstrument(), true)) {
                 Order sellOrder = order.withPrice(order.getPrice() - 0.01);
                 broker.addOrder(sellOrder);
             }
@@ -82,8 +88,8 @@ public class MyAlgoStrategy implements AlgoStrategy {
                     myPortfolio.getCountByInstrument().get(order.getInstrument()).intValue() > order.getQuantity()) {
                 Order sellOrder = order.opposite().withQuantity(order.getQuantity());
                 broker.addOrder(sellOrder);
-            } else if (order.getPrice() > getLastOrderPriceByInstrument(order.getInstrument())
-                    && getLastOrderPriceByInstrument(order.getInstrument()) + 0.01
+            } else if (order.getPrice() > getLastOrderPriceByInstrument(order.getInstrument(), false)
+                    && getLastOrderPriceByInstrument(order.getInstrument(), false) + 0.01
                     < fairPrices.getPriceByInstrument(order.getInstrument(), false)) {
 
                 Order newOrder = order.withPrice(order.getPrice() + 0.1);
@@ -99,8 +105,12 @@ public class MyAlgoStrategy implements AlgoStrategy {
             LastZeroOrder = newOrder;
         if(newOrder.getInstrument().equals(Instruments.fixedCouponBond()))
             LastFixedOrder = newOrder;
-        if(newOrder.getInstrument().equals(Instruments.floatingCouponBond()))
+        if(newOrder.getInstrument().equals(Instruments.floatingCouponBond())
+                && newOrder.getDirection() == Direction.SELL)
             LastFloatOrder = newOrder;
+        if(newOrder.getInstrument().equals(Instruments.floatingCouponBond())
+                && newOrder.getDirection() == Direction.BUY)
+            LastFloatOrderBuy = newOrder;
 
     }
 
@@ -110,14 +120,16 @@ public class MyAlgoStrategy implements AlgoStrategy {
         return true;
     }
 
-    private double getLastOrderPriceByInstrument(Instrument instrument) {
+    private double getLastOrderPriceByInstrument(Instrument instrument, boolean isSell) {
 
         if(instrument.equals(Instruments.zeroCouponBond()))
             return LastZeroOrder.getPrice();
         if(instrument.equals(Instruments.fixedCouponBond()))
             return LastFixedOrder.getPrice();
-        if(instrument.equals(Instruments.floatingCouponBond()))
+        if(instrument.equals(Instruments.floatingCouponBond()) && isSell)
             return LastFloatOrder.getPrice();
+        if((instrument.equals(Instruments.floatingCouponBond()) && !isSell))
+            return LastFloatOrderBuy.getPrice();
         return 100;
 
     }
