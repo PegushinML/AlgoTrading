@@ -62,12 +62,19 @@ public class MyAlgoStrategy implements AlgoStrategy {
 
         antiCheatOffer(exchangeEvent, broker);
 
-        if (order.getDirection() == Direction.SELL)
+        if (order.getDirection() == Direction.SELL) {
             if (order.getPrice() < fairPrices.getPriceByInstrument(order.getInstrument(), false)) {
                 Order buyOrder = order.opposite().withQuantity(order.getQuantity());
                 broker.addOrder(buyOrder);
-                //TODO work on case, where opponent has lower price
+            } else if (order.getPrice() < getLastOrderPriceByInstrument(order.getInstrument())
+                    && order.getQuantity() <= myPortfolio.getCountByInstrument().get(order.getInstrument()).intValue()
+                    && getLastOrderPriceByInstrument(order.getInstrument()) + 0.01
+                    < fairPrices.getPriceByInstrument(order.getInstrument(), false)) {
+                Order sellOrder = order.withPrice(order.getPrice() - 0.01);
+                broker.addOrder(sellOrder);
+            }
         }
+                //TODO work on case, where opponent has lower price
 
 
         if(order.getDirection() == Direction.BUY) {
@@ -75,7 +82,9 @@ public class MyAlgoStrategy implements AlgoStrategy {
                     myPortfolio.getCountByInstrument().get(order.getInstrument()).intValue() > order.getQuantity()) {
                 Order sellOrder = order.opposite().withQuantity(order.getQuantity());
                 broker.addOrder(sellOrder);
-            } else if (order.getPrice() > getLastOrderPriceByInstrument(order.getInstrument()) + 0.1) {
+            } else if (order.getPrice() > getLastOrderPriceByInstrument(order.getInstrument())
+                    && getLastOrderPriceByInstrument(order.getInstrument()) + 0.01
+                    < fairPrices.getPriceByInstrument(order.getInstrument(), false)) {
 
                 Order newOrder = order.withPrice(order.getPrice() + 0.1);
                 broker.cancelOrdersByInstrument(newOrder.getInstrument());
