@@ -41,7 +41,7 @@ public class MyAlgoStrategy implements AlgoStrategy {
 
     private void onNewPeriodStart(Broker broker) {
         //just calculate fair prices and make some offers
-        fairPrices = new FairPrices(broker, 9);
+        fairPrices = new FairPrices(broker, 8.5);
         myPortfolio = broker.getMyPortfolio();
         LastZeroOrder = Order.sell(Instruments.zeroCouponBond())
                 .withPrice(fairPrices.getZeroCouponPrice() + 10)
@@ -147,6 +147,13 @@ public class MyAlgoStrategy implements AlgoStrategy {
         if(order.getPrice() > middleOrder.getPrice() + 20.0 &&
                 order.getPrice() > fairPrices.getPriceByInstrument(order.getInstrument(), true))
             broker.addOrder(order.withPrice(order.getPrice() - 0.01));
+
+        orders = broker.getTopOrders(order.getInstrument()).getBuyOrders();
+        middleOrder = orders.get(orders.size()/2);
+        if(order.getDirection() == Direction.BUY)
+            if(order.getPrice() < middleOrder.getPrice() + 20.0 &&
+                    order.getPrice() < fairPrices.getPriceByInstrument(order.getInstrument(), false))
+                broker.addOrder(order.withPrice(order.getPrice() + 0.01));
     }
 
 }
