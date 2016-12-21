@@ -147,6 +147,13 @@ public class MyAlgoStrategy implements AlgoStrategy {
         if(order.getPrice() > middleOrder.getPrice() + 20.0 &&
                 order.getPrice() > fairPrices.getPriceByInstrument(order.getInstrument(), true))
             broker.addOrder(order.withPrice(order.getPrice() - 0.01));
+
+        orders = broker.getTopOrders(order.getInstrument()).getBuyOrders();
+        middleOrder = orders.get(orders.size()/2);
+        if(order.getDirection() == Direction.BUY)
+            if(order.getPrice() < middleOrder.getPrice() + 20.0 &&
+                    order.getPrice() < fairPrices.getPriceByInstrument(order.getInstrument(), false))
+                broker.addOrder(order.withPrice(order.getPrice() + 0.01));
     }
 
 }
