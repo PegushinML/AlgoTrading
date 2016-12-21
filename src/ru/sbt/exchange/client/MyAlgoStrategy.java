@@ -4,6 +4,8 @@ package ru.sbt.exchange.client;
 import ru.sbt.exchange.domain.*;
 import ru.sbt.exchange.domain.instrument.*;
 
+import java.util.List;
+
 /**
  * Created by Maxim on 11/29/2016.
  */
@@ -139,10 +141,12 @@ public class MyAlgoStrategy implements AlgoStrategy {
 
     private void antiCheatOffer(ExchangeEvent exchangeEvent, Broker broker) {
         Order order = exchangeEvent.getOrder();
-        Order middleOrder = broker.getTopOrders(order.getInstrument()).getSellOrders().get(4);
+        List<Order> orders = broker.getTopOrders(order.getInstrument()).getSellOrders();
+        Order middleOrder = orders.get(orders.size()/2);
         if(order.getDirection() == Direction.SELL)
-        if(order.getPrice() > middleOrder.getPrice() + 20.0)
-            broker.addOrder(order.withPrice(order.getPrice() - 5.0));
+        if(order.getPrice() > middleOrder.getPrice() + 20.0 &&
+                order.getPrice() > fairPrices.getPriceByInstrument(order.getInstrument(), true))
+            broker.addOrder(order.withPrice(order.getPrice() - 0.01));
     }
 
 }
