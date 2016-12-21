@@ -69,10 +69,10 @@ public class FairPrices {
 
     public void discountPrices(){
         Double fee = myPortfolio.getPeriodInterestRate();
-        zeroCouponPrice = zeroCouponPrice*(1.0 + fee/100.0);
-        fixedCouponPrice = fixedCouponPrice*(1.0 + fee/100.0);
-        floatCouponPriceSell = floatCouponPriceSell*(1.0 + fee/100.0);
-        floatCouponPriceBuy = floatCouponPriceBuy *(1.0 + fee/100.0);
+        zeroCouponPrice = zeroCouponPrice/(1.0 - fee/100.0);
+        fixedCouponPrice = fixedCouponPrice/(1.0 - fee/100.0);
+        floatCouponPriceSell = floatCouponPriceSell/(1.0 - fee/100.0);
+        floatCouponPriceBuy = floatCouponPriceBuy /(1.0 - fee/100.0);
     }
 
     public double getPriceByInstrument(Instrument instrument, boolean isSell) {
